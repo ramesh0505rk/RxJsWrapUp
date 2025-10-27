@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { combineLatest, concat, debounceTime, delay, distinctUntilChanged, filter, first, from, fromEvent, interval, last, map, merge, mergeMap, Observable, of, take, timer } from 'rxjs';
+import { combineLatest, concat, concatMap, debounceTime, delay, distinctUntilChanged, filter, first, from, fromEvent, interval, last, map, merge, mergeMap, Observable, of, switchMap, take, timer } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -38,6 +38,8 @@ export class HomeComponent implements OnInit {
     // this.concatTest();
     // this.combineLatestTest();
     this.mergeMapTest();
+    // this.concatMapTest();
+    // this.switchMapTest();
   }
 
   subscribeToObservable() {
@@ -142,13 +144,26 @@ export class HomeComponent implements OnInit {
 
   //Higher order mapping
   mergeMapTest() {
-    of('A', 'B').pipe(mergeMap(x => of(`${x}1`, `${x}2`))).subscribe(console.log);
+    // of('A', 'B').pipe(mergeMap(x => of(`${x}1`, `${x}2`))).subscribe(console.log);
 
-    // of('A', 'B').pipe(
-    //   mergeMap(x => interval(100).pipe(
-    //     take(2),
-    //     map(i => `${x}${i + 1}`)
-    //   ))
-    // ).subscribe(console.log);
+    of('A', 'B').pipe(
+      mergeMap(x => interval(100).pipe(
+        take(2),
+        map(i => `${x}${i + 1}`)
+      ))
+    ).subscribe(console.log);
+  }
+
+  concatMapTest() {
+    // of('A', 'B').pipe(concatMap(x => of(`${x}1`, `${x}2`))).subscribe(console.log);
+
+    of('A', 'B').pipe(
+      concatMap(x => interval(100).pipe(take(2), map(i => `${x}${i + 1}`)))
+    ).subscribe(console.log);
+  }
+
+  switchMapTest() {
+    fromEvent(document, 'click').pipe(switchMap(() => interval(1000).pipe(take(3)))).subscribe(console.log);
+    // interval(1000).pipe().subscribe(() => console.log('Ramz'))
   }
 }
